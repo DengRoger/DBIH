@@ -1,0 +1,26 @@
+CREATE DATABASE uid_head;
+CREATE TABLE "UID-Head" (
+  "UID" CHAR(64) PRIMARY KEY,
+  "HeadKey" CHAR(64)
+);
+
+CREATE DATABASE link;
+CREATE TABLE "Link" (
+  "LID" CHAR(64) PRIMARY KEY,
+  "listKey" CHAR(64),
+  "NextKey" CHAR(64)
+);
+
+CREATE DATABASE list;
+CREATE TABLE "List" (
+  "LID" CHAR(64) PRIMARY KEY,
+  "AIDList" CHAR(640)
+);
+
+CREATE DATABASE aid;
+CREATE TABLE "AID" (
+  "AID" CHAR(64) PRIMARY KEY,
+  "Topic" TEXT,
+  "Article" TEXT
+);
+

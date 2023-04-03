@@ -1,3 +1,33 @@
-version: "3"
+version: '3'
 services:
-  
+  redis:
+    restart: always
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      docker:
+        ipv4_address: 172.28.32.2
+  postgres:
+    restart: always
+    image: postgres:latest
+    container_name: dcard-postgres
+    environment:
+      POSTGRES_PASSWORD: passwd
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+      POSTGRES_INITDB_ARGS: "-U postgres --encoding=UTF8 --lc-collate=C --lc-ctype=C"
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db_data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      docker:
+        ipv4_address: 172.28.32.3
+networks:
+  docker:
+    ipam:
+      config:
+        - subnet: 172.28.32.0/24
