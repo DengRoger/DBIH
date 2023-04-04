@@ -1,35 +1,39 @@
 package module
+
 import (
+	db "DBIH/controller/DB"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
-    "DBEE_HW/controller"
+
+	"github.com/gorilla/mux"
 )
 
-type ExChange struct {
-	L int      `json:"l"`
-	R int      `json:"r"`
-	S []string `json:"s"`
+type newList struct {
+	List []string `json:"listContent"`
 }
 
-
-func ModifyHandler(w http.ResponseWriter, r *http.Request) ExChange {
+func ModifyHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		panic("Method not allowed") 
+		panic("Method not allowed")
 	}
-	var data ExChange
-	err := json.NewDecoder(r.Body).Decode(&data)
+	params := mux.Vars(r)
+	var items newList
+	err := json.NewDecoder(r.Body).Decode(&items)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-        panic(err.Error())
+		panic(err.Error())
 	}
-	// fmt.Printf("L: %d\nR: %d\nS: %v\n", data.L, data.R, data.S)
-    request := api.AddData(data.L, data.R, data.S) // int int []string
-    w.Header().Set("Content-Type", "application/json")
+	fmt.Println(items.List)
+	fmt.Printf(params["UID"])
+
 	w.WriteHeader(http.StatusOK)
-	jsonStr, err := json.Marshal(data)
-	w.Write(jsonStr)
-    return data
+	w.Write([]byte("OK"))
 }
+
+// func router() {
+// 	router := mux.NewRouter()
+// 	router.HandleFunc("/modify/{UID}", ModifyHandler).Methods("POST")
+// 	log.Fatal(http.ListenAndServe(":8006", router))
+// }
