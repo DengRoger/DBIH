@@ -1,7 +1,6 @@
 package module
 
 import (
-	db "DBIH/controller/DB"
 	"encoding/json"
 	"fmt"
 	"net/http"
