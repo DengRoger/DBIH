@@ -1,10 +1,11 @@
 package module
 
 import (
+	db "DBIH/controller/DB"
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"DBIH/controller/DB"
+
 	"github.com/gorilla/mux"
 )
 

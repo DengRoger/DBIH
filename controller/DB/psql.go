@@ -51,22 +51,22 @@ func PInsertEntryList(UID string, list []string) {
 		}
 	}
 	// insert the new list
-	_, err = pdb.Exec("INSERT INTO entryList (listKey,AID) VALUES ($1,$2)", eKey, list)
+	var mySlice []string = list
+	_, err = pdb.Exec("INSERT INTO entryList (listKey,AID) VALUES ($1,$2)", eKey, mySlice)
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
-
 // use SELECT ARRAY_SLICE(AID, 1, 10) FROM entryList OFFSET $1 LIMIT $2;
 // to get the first 10 elements of the list
 func PGetPage(UID string, page string) []string {
-    var list []string
-    err := pdb.QueryRow("SELECT ARRAY_SLICE(AID, 1, 10) FROM entryList WHERE listKey = $1", UID).Scan(&list)
-    if err != nil {
-        log.Fatal(err)
-    }
-    return list
+	var list []string
+	err := pdb.QueryRow("SELECT ARRAY_SLICE(AID, 1, 10) FROM entryList WHERE listKey = $1", UID).Scan(&list)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return list
 }
 
 /*CREATE TABLE recommendations (
