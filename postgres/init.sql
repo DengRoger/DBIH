@@ -1,23 +1,11 @@
-CREATE TABLE "UIDHead" (
-  "UID" CHAR(64) PRIMARY KEY,
-  "HeadKey" CHAR(64)
+CREATE TABLE recommendations (
+  listKey  VARCHAR(64) NOT NULL,
+  entryKey VARCHAR(64) NOT NULL,
+  PRIMARY KEY (listKey, entryKey)
 );
 
-CREATE TABLE "Link" (
-  "LID" CHAR(64) PRIMARY KEY,
-  "listKey" CHAR(64),
-  "NextKey" CHAR(64)
+CREATE TABLE entryList (
+  listKey  VARCHAR(64) NOT NULL,
+  AID  VARCHAR(64)[] ,
+  PRIMARY KEY (listKey)
 );
-
-CREATE TABLE "List" (
-  "LID" CHAR(64) PRIMARY KEY,
-  "AIDList" CHAR(640)
-  "NextKey" CHAR(64)
-);
-
-CREATE TABLE "AID" (
-  "AID" CHAR(64) PRIMARY KEY,
-  "Topic" TEXT,
-  "Article" TEXT
-);
-

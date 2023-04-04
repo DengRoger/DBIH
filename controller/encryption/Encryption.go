@@ -1,8 +1,9 @@
-package Encryption
+package encryption
 
 import (
 	"crypto/sha256"
 	"encoding/hex"
+
 	_ "github.com/lib/pq"
 )
 

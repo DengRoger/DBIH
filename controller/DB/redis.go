@@ -14,7 +14,7 @@ func init() {
 	})
 }
 
-// insert [64]byte , [64]byte into redis
+// insert string , string  into redis
 func RInsertUIDHead(UID string, key string) {
 	err := RedisClient.Set(UID, key, 0).Err()
 	if err != nil {
@@ -34,10 +34,7 @@ func RGetUIDHead(UID string) string {
 			RInsertUIDHead(UID, tmp)
 		}
 		return tmp
-	} else if err != nil {
-		panic(err)
-	}
-	// if UID found in redis, decode the key
+	} 
 	return key
 }
 
