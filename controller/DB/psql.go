@@ -34,22 +34,38 @@ func PInsertList(Key [64]byte , AIDList [640]byte , NextKey [64]byte) {
 }
 
 // query the database for a user's key
-func PQuerryUIDHead(UID string) [64]byte {
-    var key [64]byte
+func PQuerryUIDHead(UID string) string {
+    var key string
     err := db.QueryRow("SELECT key FROM users WHERE UID = $1", UID).Scan(&key)
     if err != nil {
-        log.Fatal(err)
+        return ""
     }
     return key
 }
 
 // query the database for a list's key and nextKey
-func PQuerryList(Key string) ([640]byte , [64]byte) {
-    var AIDList [640]byte
-    var NextKey [64]byte
+func PQuerryList(Key string) (string , string) {
+    var AIDList string
+    var NextKey string
     err := db.QueryRow("SELECT AIDList, NextKey FROM lists WHERE Key = $1", Key).Scan(&AIDList, &NextKey)
+    if err != nil {
+        return "" , ""
+    }
+    return AIDList, NextKey
+}
+
+// psql update a user's key
+func PUpdateUIDHead(UID string, key string) {
+    err := db.QueryRow("UPDATE users SET key = $1 WHERE UID = $2", key, UID)
     if err != nil {
         log.Fatal(err)
     }
-    return AIDList, NextKey
+}
+
+// psql update a list's key and nextKey
+func PUpdateList(Key string, AIDList string , NextKey string) {
+    err := db.QueryRow("UPDATE lists SET AIDList = $1, NextKey = $2 WHERE Key = $3", AIDList, NextKey, Key)
+    if err != nil {
+        log.Fatal(err)
+    }
 }
