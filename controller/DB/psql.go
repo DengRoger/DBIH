@@ -6,7 +6,8 @@ import (
 	"encoding/hex"
 	"fmt"
 	"log"
-	_ "github.com/lib/pq"
+
+	"github.com/lib/pq"
 )
 
 var pdb *sql.DB = func() *sql.DB {
@@ -51,33 +52,6 @@ func PInsertEntryList(UID string, list []string) {
 		log.Fatal(err)
 	}
 }
-
-// query the entryKey from recommendations and use it to query the list from entryList 
-func PGetPage(UID string, page string) []string {
-	var list []string
-	var entryKey string
-	err := pdb.QueryRow("SELECT entryKey FROM recommendations WHERE listKey = $1", UID).Scan(&entryKey)
-	if err != nil {
-		log.Fatal(err)
-	}
-	err = pdb.QueryRow("SELECT AID FROM entryList WHERE listKey = $1", entryKey).Scan(&list)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return list
-}
-
-
-// use SELECT ARRAY_SLICE(AID, 1, 10) FROM entryList OFFSET $1 LIMIT $2;
-// to get the first 10 elements of the list
-// func PGetPage(UID string, page string) []string {
-// 	var list []string
-// 	err := pdb.QueryRow("SELECT ARRAY_SLICE(AID, 1, 10) FROM entryList WHERE listKey = $1", UID).Scan(&list)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	return list
-// }
 
 /*CREATE TABLE recommendations (
   listKey  VARCHAR(64) NOT NULL,
