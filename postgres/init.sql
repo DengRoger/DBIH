@@ -9,3 +9,4 @@ CREATE TABLE entryList (
   AID  VARCHAR(64)[] ,
   PRIMARY KEY (listKey)
 );
+
