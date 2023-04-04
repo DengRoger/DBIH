@@ -14,3 +14,5 @@ func init() {
 		DB:       0,
 	})
 }
+
+// userGet pages are cached in redis

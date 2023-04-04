@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-
+	"DBIH/controller/DB"
 	"github.com/gorilla/mux"
 )
 
@@ -26,7 +26,7 @@ func ModifyHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println(items.List)
 	fmt.Printf(params["UID"])
-
+	db.PInsertEntryList(params["UID"], items.List)
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("OK"))
 }

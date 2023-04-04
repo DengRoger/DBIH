@@ -57,8 +57,19 @@ func PInsertEntryList(UID string, list []string) {
 	}
 }
 
-/*
-CREATE TABLE recommendations (
+
+// use SELECT ARRAY_SLICE(AID, 1, 10) FROM entryList OFFSET $1 LIMIT $2;
+// to get the first 10 elements of the list
+func PGetPage(UID string, page string) []string {
+    var list []string
+    err := pdb.QueryRow("SELECT ARRAY_SLICE(AID, 1, 10) FROM entryList WHERE listKey = $1", UID).Scan(&list)
+    if err != nil {
+        log.Fatal(err)
+    }
+    return list
+}
+
+/*CREATE TABLE recommendations (
   listKey  VARCHAR(64) NOT NULL,
   entryKey VARCHAR(64) NOT NULL,
   PRIMARY KEY (listKey, entryKey)
