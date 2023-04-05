@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/lib/pq"
 )
@@ -21,6 +22,10 @@ var pdb *sql.DB = func() *sql.DB {
 }()
 
 func SHA256(str string) string {
+	timeStr := time.Now().Format("2006-01-02 15:04:05")
+	str = str + timeStr
+	// fmt.Println(t)
+	// fmt.Println(t.Unix())
 	data := []byte(str)
 	myHash := sha256.Sum256(data)
 	myHex := hex.EncodeToString(myHash[:])
@@ -28,7 +33,7 @@ func SHA256(str string) string {
 }
 
 func PInsertEntryList(UID string, list []string) {
-	fmt.Println(list)
+	// fmt.Println(list)
 	var exists bool
 	nKey := SHA256(UID)
 	// check if the UID exists in the recommendations
@@ -42,6 +47,8 @@ func PInsertEntryList(UID string, list []string) {
 			log.Fatal(err)
 		}
 		if RedisClient.Exists(UID).Val() == 1 {
+			fmt.Print("\n\n\n\n\n\n\n")
+			fmt.Print(UID, nKey)
 			RedisClient.Set(UID, nKey, 0)
 		}
 	} else {
@@ -54,6 +61,7 @@ func PInsertEntryList(UID string, list []string) {
 }
 
 func GetPage(UID string, page int) []string {
+	// fmt.Println("I'm working")
 	offset := page
 	limit := 10
 	rows, err := pdb.Query("SELECT unnest(AID) FROM recommendations WHERE UID=$1 OFFSET $2 LIMIT $3", UID, offset, limit)
@@ -72,7 +80,7 @@ func GetPage(UID string, page int) []string {
 	if err := rows.Err(); err != nil {
 		panic(err)
 	}
-	fmt.Println("I'm working")
+	// fmt.Println("I'm working")
 	return aids
 }
 
@@ -80,7 +88,12 @@ func PGetListKey(UID string) string {
 	var listKey string
 	err := pdb.QueryRow("SELECT listKey FROM recommendations WHERE UID = $1", UID).Scan(&listKey)
 	if err != nil {
-		log.Fatal(err)
+		if err == sql.ErrNoRows {
+			// 沒有找到符合條件的記錄
+			return ""
+		} else {
+			log.Fatal(err)
+		}
 	}
 	return listKey
 }

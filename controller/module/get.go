@@ -16,14 +16,40 @@ type Response struct {
 	ListContent []string `json:"listContent"`
 }
 
+// func Getpage(w http.ResponseWriter, r *http.Request) {
+// 	vars := mux.Vars(r)
+// 	uid := vars["uid"]
+// 	page, _ := strconv.Atoi(vars["page"])
+// 	data := db.RGetPage(uid, page)
+// 	jsonData, err := json.Marshal(data)
+// 	if err != nil {
+// 		http.Error(w, err.Error(), http.StatusInternalServerError)
+// 		return
+// 	}
+// 	w.Header().Set("Content-Type", "application/json")
+// 	w.Write(jsonData)
+// 	w.WriteHeader(http.StatusOK)
+
+// }
+
 func Getpage(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	uid := vars["uid"]
-	// type of page is int
-	page, _ := strconv.Atoi(vars["page"])
-	tmp := db.RGetPage(uid, page)
-	fmt.Println(tmp)
-	json.NewEncoder(w).Encode(tmp)
-	fmt.Println(tmp)
-	fmt.Println("List sent to client")
+
+	page, err := strconv.Atoi(vars["page"])
+	fmt.Println(uid, page)
+	if err != nil {
+		http.Error(w, "invalid page number", http.StatusBadRequest)
+		return
+	}
+	data := db.RGetPage(uid, page)
+	fmt.Print(data)
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonData)
+	w.WriteHeader(http.StatusOK)
 }
