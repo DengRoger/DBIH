@@ -1,11 +1,17 @@
 package db
 
 import (
+	"encoding/json"
+	"fmt"
 	"strconv"
 
 	"github.com/go-redis/redis"
 	_ "github.com/lib/pq"
 )
+
+type Response struct {
+	ListContent []string `json:"listContent"`
+}
 
 var RedisClient *redis.Client
 
@@ -18,16 +24,47 @@ func init() {
 }
 
 func RGetPage(uid string, page int) []string {
-	key := uid + strconv.Itoa(page)
-	// []string is the type of listKey
-	listKey := []string{}
-	// check if the key exists in redis
-	if RedisClient.Exists(key).Val() == 1 {
-		return RedisClient.LRange(key, 0, -1).Val()
-	} else { // if not, get the listKey from postgreSQL
-		listKey = GetPage(uid, page)
+	var listKey string
+	lexists, err := RedisClient.Exists(uid).Result()
+	if err != nil {
+		panic(err)
 	}
-	return listKey
-}
+	if lexists == 0 {
+		listKey = PGetListKey(uid)
+		RedisClient.Set(uid, listKey, 0)
+	} else {
+		listKey, err = RedisClient.Get(uid).Result()
+		if err != nil {
+			panic(err)
+		}
+	}
 
-// userGet pages are cached in redis
+	listKey += strconv.Itoa(page)
+	check, err := RedisClient.Exists(listKey).Result()
+	fmt.Print(check, err)
+	if err != nil {
+		panic(err)
+	}
+	if check == 0 {
+		fmt.Println(listKey)
+		tmp := GetPage(uid, page)
+		jsonString, err := json.Marshal(tmp)
+		if err != nil {
+			panic(err)
+		}
+		err = RedisClient.Set(listKey, jsonString, 0).Err()
+		if err != nil {
+			panic(err)
+		}
+		return tmp
+	} else {
+		fmt.Println(listKey)
+		tmp, _ := RedisClient.Get(listKey).Result()
+		var getInfoResult []string
+		err := json.Unmarshal([]byte(tmp), &getInfoResult)
+		if err != nil {
+			panic(err)
+		}
+		return getInfoResult
+	}
+}

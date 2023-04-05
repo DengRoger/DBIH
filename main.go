@@ -2,11 +2,9 @@ package main
 
 import (
 	//
-	module "DBIH/controller/module"
-	"log"
-	"net/http"
 
-	"github.com/gorilla/mux"
+	db "DBIH/controller/DB"
+	"fmt"
 )
 
 // encrypt the listKey and store it in postgreSQL
@@ -20,8 +18,12 @@ func main() {
 	// link to postgreSQL
 	// Create()
 	// webTesting()
-	router := mux.NewRouter()
-	router.HandleFunc("/modify/{UID}", module.ModifyHandler).Methods("POST")
-	router.HandleFunc("/get/{UID}/{page}", module.Getpage).Methods("GET")
-	log.Fatal(http.ListenAndServe(":8006", router))
+	// router := mux.NewRouter()
+	// router.HandleFunc("/modify/{UID}", module.ModifyHandler).Methods("POST")
+	// router.HandleFunc("/get/{UID}/{page}", module.Getpage).Methods("GET")
+	// log.Fatal(http.ListenAndServe(":8006", router))
+	// module.Getpage()
+
+	fmt.Println(db.RGetPage("rew", 10))
+	fmt.Println(db.RGetPage("re", 21))
 }

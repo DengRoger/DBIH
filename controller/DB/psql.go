@@ -54,9 +54,9 @@ func PInsertEntryList(UID string, list []string) {
 }
 
 func GetPage(UID string, page int) []string {
-	offset := page - 1
+	offset := page
 	limit := 10
-	rows, err := pdb.Query("SELECT unnest(AID) FROM entryList WHERE UID=$1 OFFSET $2 LIMIT $3", UID, offset, limit)
+	rows, err := pdb.Query("SELECT unnest(AID) FROM recommendations WHERE UID=$1 OFFSET $2 LIMIT $3", UID, offset, limit)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -72,7 +72,17 @@ func GetPage(UID string, page int) []string {
 	if err := rows.Err(); err != nil {
 		panic(err)
 	}
+	fmt.Println("I'm working")
 	return aids
+}
+
+func PGetListKey(UID string) string {
+	var listKey string
+	err := pdb.QueryRow("SELECT listKey FROM recommendations WHERE UID = $1", UID).Scan(&listKey)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return listKey
 }
 
 /*
