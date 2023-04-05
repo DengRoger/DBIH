@@ -5,6 +5,7 @@ import (
 	module "DBIH/controller/module"
 	"log"
 	"net/http"
+
 	"github.com/gorilla/mux"
 )
 
@@ -21,5 +22,6 @@ func main() {
 	// webTesting()
 	router := mux.NewRouter()
 	router.HandleFunc("/modify/{UID}", module.ModifyHandler).Methods("POST")
+	router.HandleFunc("/get/{UID}/{page}", module.Getpage).Methods("GET")
 	log.Fatal(http.ListenAndServe(":8006", router))
 }
