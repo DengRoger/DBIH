@@ -3,7 +3,6 @@ package module
 import (
 	db "DBIH/controller/DB"
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -25,15 +24,7 @@ func ModifyHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		panic(err.Error())
 	}
-	fmt.Println(items.List)
-	fmt.Printf(params["uid"])
 	db.PInsertEntryList(params["uid"], items.List)
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("OK"))
 }
-
-// func router() {
-// 	router := mux.NewRouter()
-// 	router.HandleFunc("/modify/{UID}", ModifyHandler).Methods("POST")
-// 	log.Fatal(http.ListenAndServe(":8006", router))
-// }

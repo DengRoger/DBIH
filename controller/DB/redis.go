@@ -22,53 +22,9 @@ func init() {
 	})
 }
 
-// func RGetPage(uid string, page int) []string {
-// 	var listKey string
-// 	lexists, err := RedisClient.Exists(uid).Result()
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// 	if lexists == 0 {
-// 		listKey = PGetListKey(uid)
-// 		RedisClient.Set(uid, listKey, 0)
-// 	} else {
-// 		listKey, err = RedisClient.Get(uid).Result()
-// 		if err != nil {
-// 			panic(err)
-// 		}
-// 	}
-
-//		listKey += strconv.Itoa(page)
-//		check, err := RedisClient.Exists(listKey).Result()
-//		fmt.Print(check, err)
-//		if err != nil {
-//			panic(err)
-//		}
-//		if check == 0 {
-//			fmt.Println(listKey)
-//			tmp := GetPage(uid, page)
-//			jsonString, err := json.Marshal(tmp)
-//			if err != nil {
-//				panic(err)
-//			}
-//			err = RedisClient.Set(listKey, jsonString, 0).Err()
-//			if err != nil {
-//				panic(err)
-//			}
-//			return tmp
-//		} else {
-//			fmt.Println(listKey)
-//			tmp, _ := RedisClient.Get(listKey).Result()
-//			var getInfoResult []string
-//			err := json.Unmarshal([]byte(tmp), &getInfoResult)
-//			if err != nil {
-//				panic(err)
-//			}
-//			return getInfoResult
-//		}
-//	}
 func RGetPage(uid string, page int) []string {
 	var listKey string
+	page /= 10
 	lexists, err := RedisClient.Exists(uid).Result()
 	if err != nil {
 		panic(err)
@@ -76,7 +32,6 @@ func RGetPage(uid string, page int) []string {
 	if lexists == 0 {
 		listKey = PGetListKey(uid)
 		if listKey == "" {
-			// 沒有找到符合條件的記錄
 			return []string{}
 		}
 		RedisClient.Set(uid, listKey, 0)
@@ -89,12 +44,10 @@ func RGetPage(uid string, page int) []string {
 
 	listKey += strconv.Itoa(page)
 	check, err := RedisClient.Exists(listKey).Result()
-	// fmt.Print(check, err)
 	if err != nil {
 		panic(err)
 	}
 	if check == 0 {
-		// fmt.Println(listKey)
 		tmp := GetPage(uid, page)
 		jsonString, err := json.Marshal(tmp)
 		if err != nil {
@@ -104,17 +57,14 @@ func RGetPage(uid string, page int) []string {
 		if err != nil {
 			panic(err)
 		}
-		// fmt.Print(tmp)
 		return tmp
 	} else {
-		// fmt.Println(listKey)
 		tmp, _ := RedisClient.Get(listKey).Result()
 		var getInfoResult []string
 		err := json.Unmarshal([]byte(tmp), &getInfoResult)
 		if err != nil {
 			panic(err)
 		}
-		// fmt.Print(getInfoResult)
 		return getInfoResult
 	}
 }
